@@ -1,19 +1,18 @@
-import { useAuthModalOpen, useAuthModalActions } from '@/store/useAuthModalStore';
+import { useAuthModalActions, useAuthModalOpen, useAuthModalView } from '@/store/useAuthModalStore';
 import {
-  useDisclosure,
-  Button,
+  Flex,
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  ModalOverlay,
 } from '@chakra-ui/react';
-import { fstat } from 'fs';
+import AuthInputs from './AuthInputs';
 
 const AuthModal: React.FC = () => {
   const isOpen = useAuthModalOpen();
+  const view = useAuthModalView();
   const { setOpen } = useAuthModalActions();
 
   const onModalClose = () => {
@@ -25,9 +24,25 @@ const AuthModal: React.FC = () => {
       <Modal isOpen={isOpen} onClose={onModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader textAlign="center">
+            {view === 'login' && 'Login'}
+            {view === 'signup' && 'Sign Up'}
+            {view === 'resetPassword' && 'Reset Password'}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>Here is the modal body</ModalBody>
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            pb={6}
+          >
+            <Flex direction="column" justify="center" align="center" width="70%">
+              {/* <OAuthButtons /> */}
+              <AuthInputs />
+              {/* <ResetPassword /> */}
+            </Flex>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
