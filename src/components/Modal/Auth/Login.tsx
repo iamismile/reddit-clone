@@ -65,11 +65,11 @@ const Login: React.FC = () => {
         bg="gray.50"
       />
       <Button type="submit" width="100%" height="36px" mt={2} mb={2}>
-        Log in
+        Log In
       </Button>
 
       <Flex fontSize="9pt" justify="center">
-        <Text mr={1}>New Here?</Text>
+        <Text mr={1}>New here?</Text>
         <Text
           color="blue.500"
           fontWeight={700}

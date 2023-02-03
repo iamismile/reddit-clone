@@ -7,8 +7,10 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from '@chakra-ui/react';
 import AuthInputs from './AuthInputs';
+import OAuthButtons from './OAuthButtons';
 
 const AuthModal: React.FC = () => {
   const isOpen = useAuthModalOpen();
@@ -38,7 +40,10 @@ const AuthModal: React.FC = () => {
             pb={6}
           >
             <Flex direction="column" justify="center" align="center" width="70%">
-              {/* <OAuthButtons /> */}
+              <OAuthButtons />
+              <Text color="gray.400" fontWeight={700}>
+                OR
+              </Text>
               <AuthInputs />
               {/* <ResetPassword /> */}
             </Flex>
