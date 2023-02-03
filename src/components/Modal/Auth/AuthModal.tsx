@@ -11,15 +11,25 @@ import {
 } from '@chakra-ui/react';
 import AuthInputs from './AuthInputs';
 import OAuthButtons from './OAuthButtons';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '@/firebase/clientApp';
+import { useEffect } from 'react';
 
 const AuthModal: React.FC = () => {
   const isOpen = useAuthModalOpen();
   const view = useAuthModalView();
   const { setOpen } = useAuthModalActions();
+  const [user, loading, error] = useAuthState(auth);
 
   const onModalClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (user) onModalClose();
+    console.log({ user });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <>
