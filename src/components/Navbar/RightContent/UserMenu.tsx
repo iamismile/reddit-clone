@@ -24,7 +24,6 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const { setOpen, setView } = useAuthModalActions();
-  console.log({ user });
 
   return (
     <Menu>
