@@ -14,6 +14,7 @@ import OAuthButtons from './OAuthButtons';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/clientApp';
 import { useEffect } from 'react';
+import ResetPassword from './ResetPassword';
 
 const AuthModal: React.FC = () => {
   const isOpen = useAuthModalOpen();
@@ -27,7 +28,6 @@ const AuthModal: React.FC = () => {
 
   useEffect(() => {
     if (user) onModalClose();
-    console.log({ user });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -50,12 +50,17 @@ const AuthModal: React.FC = () => {
             pb={6}
           >
             <Flex direction="column" justify="center" align="center" width="70%">
-              <OAuthButtons />
-              <Text color="gray.400" fontWeight={700}>
-                OR
-              </Text>
-              <AuthInputs />
-              {/* <ResetPassword /> */}
+              {view === 'resetPassword' ? (
+                <ResetPassword />
+              ) : (
+                <>
+                  <OAuthButtons />
+                  <Text color="gray.400" fontWeight={700}>
+                    OR
+                  </Text>
+                  <AuthInputs />
+                </>
+              )}
             </Flex>
           </ModalBody>
         </ModalContent>

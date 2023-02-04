@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
-type View = 'login' | 'signup' | 'resetPassword';
+export type ModalView = 'login' | 'signup' | 'resetPassword';
 
 export interface IAuthModalState {
   open: boolean;
-  view: View;
+  view: ModalView;
   actions: {
     setOpen: (modalState: boolean) => void;
-    setView: (view: View) => void;
+    setView: (view: ModalView) => void;
   };
 }
 
@@ -16,7 +16,7 @@ const useAuthModalStore = create<IAuthModalState>()((set) => ({
   view: 'login',
   actions: {
     setOpen: (modalState: boolean) => set({ open: modalState }),
-    setView: (view: View) => set({ view }),
+    setView: (view: ModalView) => set({ view }),
   },
 }));
 

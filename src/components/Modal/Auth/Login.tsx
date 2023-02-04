@@ -79,6 +79,19 @@ const Login: React.FC = () => {
         Log In
       </Button>
 
+      <Flex fontSize="9pt" justify="center" mb={2}>
+        <Text mr={1}>Forgot your password?</Text>
+        <Text
+          color="blue.500"
+          fontWeight={700}
+          cursor="pointer"
+          onClick={() => {
+            setView('resetPassword');
+          }}
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justify="center">
         <Text mr={1}>New here?</Text>
         <Text
