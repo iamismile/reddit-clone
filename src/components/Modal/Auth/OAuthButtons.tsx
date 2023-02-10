@@ -14,7 +14,12 @@ const OAuthButtons: React.FC = () => {
     // if user is login then user data will update
     // otherwise new user will create
     const userDocRef = doc(firestore, 'users', user.uid);
-    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)));
+    await setDoc(userDocRef, {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      providerData: user.providerData,
+    });
   };
 
   useEffect(() => {
