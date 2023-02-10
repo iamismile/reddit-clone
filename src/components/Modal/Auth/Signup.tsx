@@ -1,8 +1,10 @@
-import { auth } from '@/firebase/clientApp';
+import { auth, firestore } from '@/firebase/clientApp';
 import { FIREBASE_ERRORS } from '@/firebase/error';
 import { useAuthModalActions } from '@/store/useAuthModalStore';
 import { Button, Flex, Input, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { User } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
 const Signup: React.FC = () => {
@@ -13,7 +15,7 @@ const Signup: React.FC = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
-  const [createUserWithEmailAndPassword, user, loading, userError] =
+  const [createUserWithEmailAndPassword, userCred, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +34,16 @@ const Signup: React.FC = () => {
     }
     createUserWithEmailAndPassword(signupForm.email, signupForm.password);
   };
+
+  const createUserDocument = async (user: User) => {
+    await addDoc(collection(firestore, 'users'), JSON.parse(JSON.stringify(user)));
+  };
+
+  useEffect(() => {
+    if (userCred) {
+      createUserDocument(userCred.user);
+    }
+  }, [userCred]);
 
   return (
     <form onSubmit={onFormSubmit}>
