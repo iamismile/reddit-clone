@@ -12,7 +12,6 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
-  console.log('data', communityData);
   if (!communityData) {
     return <CommunityNotFound />;
   }

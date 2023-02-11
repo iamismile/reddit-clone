@@ -5,7 +5,6 @@ interface PageContentLayoutProps {
 }
 
 const PageContentLayout: React.FC<PageContentLayoutProps> = ({ children }) => {
-  console.log({ children });
   return (
     <Flex justify="center" padding="16px 0px" border="1px solid red">
       <Flex width="95%" justify="center" maxWidth="860px" border="1px solid green">
