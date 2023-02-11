@@ -1,5 +1,6 @@
 import CommunityHeader from '@/components/Community/CommunityHeader';
 import CommunityNotFound from '@/components/Community/CommunityNotFound';
+import PageContentLayout from '@/components/Layout/PageContentLayout';
 import { firestore } from '@/firebase/clientApp';
 import { ICommunity } from '@/store/useCommunityStore';
 import { doc, getDoc } from 'firebase/firestore';
@@ -18,6 +19,25 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
   return (
     <>
       <CommunityHeader communityData={communityData} />
+      <PageContentLayout>
+        <>
+          <div>LHS</div>
+          <div>LHS</div>
+          <div>LHS</div>
+          <div>LHS</div>
+          <div>LHS</div>
+          <div>LHS</div>
+        </>
+
+        <>
+          <div>RHS</div>
+          <div>RHS</div>
+          <div>RHS</div>
+          <div>RHS</div>
+          <div>RHS</div>
+          <div>RHS</div>
+        </>
+      </PageContentLayout>
     </>
   );
 };
