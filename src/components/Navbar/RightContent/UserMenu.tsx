@@ -17,6 +17,7 @@ import { IoSparkles } from 'react-icons/io5';
 import { VscAccount } from 'react-icons/vsc';
 import { auth } from '@/firebase/clientApp';
 import { useAuthModalActions } from '@/store/useAuthModalStore';
+import { useCommunityActions } from '@/store/useCommunityStore';
 
 interface UserMenuProps {
   user?: User | null;
@@ -24,6 +25,12 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const { setOpen, setView } = useAuthModalActions();
+  const { setSnippets } = useCommunityActions();
+
+  const logout = async () => {
+    await signOut(auth);
+    setSnippets([]);
+  };
 
   return (
     <Menu>
@@ -83,7 +90,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
                 bg: 'blue.500',
                 color: 'white',
               }}
-              onClick={() => signOut(auth)}
+              onClick={logout}
             >
               <Flex align="center">
                 <Icon as={MdOutlineLogout} fontSize={20} mr={2} />
