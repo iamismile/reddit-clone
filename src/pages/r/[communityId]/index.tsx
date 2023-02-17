@@ -1,5 +1,6 @@
 import CommunityHeader from '@/components/Community/CommunityHeader';
 import CommunityNotFound from '@/components/Community/CommunityNotFound';
+import CreatePostLink from '@/components/Community/CreatePostLink';
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import { firestore } from '@/firebase/clientApp';
 import { ICommunity } from '@/store/useCommunityStore';
@@ -20,20 +21,10 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
       <CommunityHeader communityData={communityData} />
       <PageContentLayout>
         <>
-          <div>LHS</div>
-          <div>LHS</div>
-          <div>LHS</div>
-          <div>LHS</div>
-          <div>LHS</div>
-          <div>LHS</div>
+          <CreatePostLink />
         </>
 
         <>
-          <div>RHS</div>
-          <div>RHS</div>
-          <div>RHS</div>
-          <div>RHS</div>
-          <div>RHS</div>
           <div>RHS</div>
         </>
       </PageContentLayout>
