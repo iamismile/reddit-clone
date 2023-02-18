@@ -1,15 +1,19 @@
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import NewPostForm from '@/components/Post/NewPostForm';
+import { auth } from '@/firebase/clientApp';
 import { Box, Text } from '@chakra-ui/react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const SubmitPostPage: React.FC = () => {
+  const [user] = useAuthState(auth);
+
   return (
     <PageContentLayout>
       <>
         <Box p="14px 0" borderBottom="1px solid" borderColor="white">
           <Text>Create a post</Text>
         </Box>
-        <NewPostForm />
+        {user && <NewPostForm user={user} />}
       </>
       <>About</>
     </PageContentLayout>
