@@ -1,5 +1,9 @@
-import { Flex } from '@chakra-ui/react';
+import { firestore, storage } from '@/firebase/clientApp';
+import { IPost } from '@/store/usePostStore';
+import { Alert, AlertIcon, Flex, Text } from '@chakra-ui/react';
 import { User } from 'firebase/auth';
+import { addDoc, collection, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { IconType } from 'react-icons';
@@ -9,10 +13,6 @@ import { IoDocumentText, IoImageOutline } from 'react-icons/io5';
 import ImageUpload from './PostForm/ImageUpload';
 import TextInputs from './PostForm/TextInputs';
 import TabItem from './TabItem';
-import { IPost } from '@/store/usePostStore';
-import { addDoc, collection, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore';
-import { firestore, storage } from '@/firebase/clientApp';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 
 export interface ITabItem {
   title: string;
@@ -54,6 +54,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
   });
   const [selectedFile, setSelectedFile] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
 
   const handleCreatePost = async () => {
@@ -86,6 +87,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
       }
     } catch (err: any) {
       console.error('handleCreatePost error', err.message);
+      setError(true);
     }
     setIsLoading(false);
 
@@ -140,6 +142,12 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
           />
         )}
       </Flex>
+      {error && (
+        <Alert status="error">
+          <AlertIcon />
+          <Text>Error creating post</Text>
+        </Alert>
+      )}
     </Flex>
   );
 };
