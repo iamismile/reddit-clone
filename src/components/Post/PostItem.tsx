@@ -1,6 +1,7 @@
 import { IPost } from '@/store/usePostStore';
-import { Flex, Icon, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, Icon, Image, Skeleton, Stack, Text } from '@chakra-ui/react';
 import moment from 'moment';
+import { useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { BsChat, BsDot } from 'react-icons/bs';
 import { FaReddit } from 'react-icons/fa';
@@ -30,6 +31,8 @@ const PostItem: React.FC<PostItemProps> = ({
   onDeletePost,
   onSelectPost,
 }) => {
+  const [isImageLoading, setIsImageLoading] = useState(true);
+
   return (
     <Flex
       border="1px solid"
@@ -77,7 +80,15 @@ const PostItem: React.FC<PostItemProps> = ({
 
           {post.imageURL && (
             <Flex justify="center" align="center" p={2}>
-              <Image src={post.imageURL} alt={post.title} maxWidth="460px" />
+              {isImageLoading && <Skeleton height="200px" width="100%" borderRadius={4} />}
+              <Image
+                src={post.imageURL}
+                alt={post.title}
+                width="100%"
+                maxWidth="460px"
+                display={isImageLoading ? 'none' : 'unset'}
+                onLoad={() => setIsImageLoading(false)}
+              />
             </Flex>
           )}
         </Stack>
