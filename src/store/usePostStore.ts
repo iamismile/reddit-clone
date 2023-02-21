@@ -18,9 +18,18 @@ export interface IPost {
 interface IPostState {
   selectedPost: IPost | null;
   posts: IPost[];
+  actions: {
+    setPosts: (posts: IPost[]) => void;
+  };
 }
 
 const usePostStore = create<IPostState>()((set) => ({
   selectedPost: null,
   posts: [],
+  actions: {
+    setPosts: (posts) => set({ posts }),
+  },
 }));
+
+export const usePostPosts = () => usePostStore((state) => state.posts);
+export const usePostActions = () => usePostStore((state) => state.actions);
