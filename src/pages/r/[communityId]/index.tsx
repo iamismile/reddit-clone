@@ -1,12 +1,14 @@
+import About from '@/components/Community/About';
 import CommunityHeader from '@/components/Community/CommunityHeader';
 import CommunityNotFound from '@/components/Community/CommunityNotFound';
 import CreatePostLink from '@/components/Community/CreatePostLink';
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import Posts from '@/components/Post/Posts';
 import { firestore } from '@/firebase/clientApp';
-import { ICommunity } from '@/store/useCommunityStore';
+import { ICommunity, useCommunityActions } from '@/store/useCommunityStore';
 import { doc, getDoc } from 'firebase/firestore';
 import { GetServerSidePropsContext } from 'next';
+import { useEffect } from 'react';
 import safeJsonStringify from 'safe-json-stringify';
 
 interface CommunityPageProps {
@@ -14,9 +16,17 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
+  const { setCurrentCommunity } = useCommunityActions();
+
+  useEffect(() => {
+    setCurrentCommunity(communityData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!communityData) {
     return <CommunityNotFound />;
   }
+
   return (
     <>
       <CommunityHeader communityData={communityData} />
@@ -27,7 +37,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
         </>
 
         <>
-          <div>RHS</div>
+          <About communityData={communityData} />
         </>
       </PageContentLayout>
     </>
