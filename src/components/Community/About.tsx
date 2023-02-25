@@ -1,7 +1,29 @@
-import { ICommunity } from '@/store/useCommunityStore';
-import { Box, Button, Divider, Flex, Icon, Stack, Text } from '@chakra-ui/react';
+import { auth, firestore, storage } from '@/firebase/clientApp';
+import useSelectFile from '@/hooks/useSelectFile';
+import {
+  ICommunity,
+  useCommunityActions,
+  useCommunityCurrentCommunity,
+} from '@/store/useCommunityStore';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Icon,
+  Image,
+  Stack,
+  Spinner,
+  Text,
+  Input,
+} from '@chakra-ui/react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import moment from 'moment';
 import Link from 'next/link';
+import { useRef, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { FaReddit } from 'react-icons/fa';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { RiCakeLine } from 'react-icons/ri';
 
@@ -10,6 +32,29 @@ interface AboutProps {
 }
 
 const About: React.FC<AboutProps> = ({ communityData }) => {
+  const [user] = useAuthState(auth);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile();
+  const { setCurrentCommunity } = useCommunityActions();
+  const selectedFileRef = useRef<HTMLInputElement>(null);
+
+  const onUpdateImage = async () => {
+    if (!selectedFile) return;
+    setIsImageUploading(true);
+    try {
+      const imageRef = ref(storage, `communities/${communityData.id}/image`);
+      await uploadString(imageRef, selectedFile, 'data_url');
+
+      const downloadUrl = await getDownloadURL(imageRef);
+      await updateDoc(doc(firestore, 'communities', communityData.id), { imageURL: downloadUrl });
+      setCurrentCommunity({ ...communityData, imageURL: downloadUrl });
+      setSelectedFile(undefined);
+    } catch (err: any) {
+      console.error('onUpdateImage error', err.message);
+    }
+    setIsImageUploading(false);
+  };
+
   return (
     <Box position="sticky" top="14px">
       <Flex
@@ -53,6 +98,42 @@ const About: React.FC<AboutProps> = ({ communityData }) => {
               Create post
             </Button>
           </Link>
+
+          {communityData.creatorId === user?.uid && (
+            <>
+              <Divider />
+              <Stack spacing={1} fontSize="10pt">
+                <Text fontWeight={600}>Admin</Text>
+                <Flex align="center" justify="space-between">
+                  <Text
+                    color="blue.500"
+                    cursor="pointer"
+                    _hover={{ textDecoration: 'underline' }}
+                    onClick={() => selectedFileRef.current?.click()}
+                  >
+                    Change Image
+                  </Text>
+                  {communityData.imageURL || selectedFile ? (
+                    <Image
+                      src={selectedFile || communityData.imageURL}
+                      alt={communityData.id}
+                      borderRadius="full"
+                      boxSize="40px"
+                    />
+                  ) : (
+                    <Icon as={FaReddit} fontSize={40} color="brand.100" mr={2} />
+                  )}
+                </Flex>
+                {selectedFile && isImageUploading && <Spinner />}
+                {selectedFile && !isImageUploading && (
+                  <Text cursor="pointer" onClick={onUpdateImage}>
+                    Save Changes
+                  </Text>
+                )}
+                <Input ref={selectedFileRef} type="file" hidden onChange={onSelectFile} />
+              </Stack>
+            </>
+          )}
         </Stack>
       </Flex>
     </Box>

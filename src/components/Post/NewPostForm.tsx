@@ -1,4 +1,5 @@
 import { firestore, storage } from '@/firebase/clientApp';
+import useSelectFile from '@/hooks/useSelectFile';
 import { IPost } from '@/store/usePostStore';
 import { Alert, AlertIcon, Flex, Text } from '@chakra-ui/react';
 import { User } from 'firebase/auth';
@@ -52,7 +53,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     title: '',
     body: '',
   });
-  const [selectedFile, setSelectedFile] = useState<string>();
+  const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const router = useRouter();
@@ -95,19 +96,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     setIsLoading(false);
   };
 
-  const onSelectImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    if (e.target.files?.[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-    }
-
-    reader.addEventListener('load', (readEvent) => {
-      if (readEvent.target?.result) {
-        setSelectedFile(readEvent.target.result as string);
-      }
-    });
-  };
-
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTextInput((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
   };
@@ -138,7 +126,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
             selectedFile={selectedFile}
             setSelectedFile={setSelectedFile}
             setSelectedTab={setSelectedTab}
-            onSelectImage={onSelectImage}
+            onSelectImage={onSelectFile}
           />
         )}
       </Flex>

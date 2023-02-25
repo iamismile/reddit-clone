@@ -4,6 +4,7 @@ import {
   ICommunity,
   ICommunitySnippet,
   useCommunityActions,
+  useCommunityCurrentCommunity,
   useCommunitySnippets,
 } from '@/store/useCommunityStore';
 import { collection, doc, getDocs, increment, writeBatch } from 'firebase/firestore';
@@ -15,6 +16,7 @@ const useCommunityData = () => {
   const [error, setError] = useState('');
   const [user] = useAuthState(auth);
   const snippets = useCommunitySnippets();
+  const currentCommunity = useCommunityCurrentCommunity();
   const { setSnippets, addSnippet, removeSnippet } = useCommunityActions();
   const { setOpen, setView } = useAuthModalActions();
 
@@ -115,7 +117,7 @@ const useCommunityData = () => {
   }, [user]);
 
   return {
-    communityStateValue: { snippets },
+    communityStateValue: { snippets, currentCommunity },
     onJoinLeaveOrJoinCommunity,
     isLoading,
     error,
