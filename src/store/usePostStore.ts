@@ -29,6 +29,7 @@ interface IPostState {
   actions: {
     setPosts: (posts: IPost[]) => void;
     setPostVotes: (postVotes: IPostVote[]) => void;
+    setSelectedPost: (post: IPost) => void;
   };
 }
 
@@ -39,9 +40,11 @@ const usePostStore = create<IPostState>()((set) => ({
   actions: {
     setPosts: (posts) => set({ posts }),
     setPostVotes: (postVotes) => set({ postVotes }),
+    setSelectedPost: (post) => set({ selectedPost: post }),
   },
 }));
 
 export const usePostPosts = () => usePostStore((state) => state.posts);
 export const usePostPostVotes = () => usePostStore((state) => state.postVotes);
+export const usePostSelectedPost = () => usePostStore((state) => state.selectedPost);
 export const usePostActions = () => usePostStore((state) => state.actions);

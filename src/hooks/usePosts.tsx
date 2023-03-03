@@ -7,21 +7,32 @@ import {
   usePostActions,
   usePostPosts,
   usePostPostVotes,
+  usePostSelectedPost,
 } from '@/store/usePostStore';
 import { collection, deleteDoc, doc, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const usePosts = () => {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
   const posts = usePostPosts();
   const postVotes = usePostPostVotes();
   const currentCommunity = useCommunityCurrentCommunity();
-  const { setPosts, setPostVotes } = usePostActions();
+  const selectedPost = usePostSelectedPost();
+  const { setPosts, setPostVotes, setSelectedPost } = usePostActions();
   const { setOpen, setView } = useAuthModalActions();
-  const [user] = useAuthState(auth);
 
-  const onVote = async (post: IPost, vote: number, communityId: string) => {
+  const onVote = async (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: IPost,
+    vote: number,
+    communityId: string
+  ) => {
+    event.stopPropagation();
+
     // When there is no user open auth modal
     if (!user?.uid) {
       setOpen(true);
@@ -93,12 +104,16 @@ const usePosts = () => {
       updatedPosts[postIndex] = updatedPost;
       setPosts(updatedPosts);
       setPostVotes(updatedPostVotes);
+      if (selectedPost) setSelectedPost(updatedPost);
     } catch (err: any) {
       console.error('onVote error', err.message);
     }
   };
 
-  const onSelectPost = () => {};
+  const onSelectPost = (post: IPost) => {
+    setSelectedPost(post);
+    router.push(`/r/${post.communityId}/comments/${post.id}`);
+  };
 
   const onDeletePost = async (post: IPost): Promise<boolean> => {
     try {
@@ -152,6 +167,7 @@ const usePosts = () => {
     posts,
     setPosts,
     postVotes,
+    selectedPost,
     onVote,
     onDeletePost,
     onSelectPost,
