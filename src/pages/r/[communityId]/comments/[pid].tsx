@@ -1,6 +1,8 @@
+import About from '@/components/Community/About';
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import PostItem from '@/components/Post/PostItem';
 import { auth, firestore } from '@/firebase/clientApp';
+import useCommunityData from '@/hooks/useCommunityData';
 import usePosts from '@/hooks/usePosts';
 import { IPost } from '@/store/usePostStore';
 import { doc, getDoc } from 'firebase/firestore';
@@ -12,6 +14,7 @@ const PostPage: React.FC = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const { selectedPost, setSelectedPost, postVotes, onVote, onDeletePost } = usePosts();
+  const { communityStateValue } = useCommunityData();
 
   const fetchPost = async (postId: string) => {
     try {
@@ -47,7 +50,11 @@ const PostPage: React.FC = () => {
         )}
       </>
 
-      <></>
+      <>
+        {communityStateValue.currentCommunity && (
+          <About communityData={communityStateValue.currentCommunity} />
+        )}
+      </>
     </PageContentLayout>
   );
 };

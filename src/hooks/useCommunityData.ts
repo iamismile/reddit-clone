@@ -7,7 +7,8 @@ import {
   useCommunityCurrentCommunity,
   useCommunitySnippets,
 } from '@/store/useCommunityStore';
-import { collection, doc, getDocs, increment, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, increment, writeBatch } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
@@ -15,9 +16,10 @@ const useCommunityData = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [user] = useAuthState(auth);
+  const router = useRouter();
   const snippets = useCommunitySnippets();
   const currentCommunity = useCommunityCurrentCommunity();
-  const { setSnippets, addSnippet, removeSnippet } = useCommunityActions();
+  const { setSnippets, addSnippet, removeSnippet, setCurrentCommunity } = useCommunityActions();
   const { setOpen, setView } = useAuthModalActions();
 
   const joinCommunity = async (communityData: ICommunity) => {
@@ -110,6 +112,16 @@ const useCommunityData = () => {
     setIsLoading(false);
   };
 
+  const getCommunityData = async (communityId: string) => {
+    try {
+      const communityDocRef = doc(firestore, 'communities', communityId);
+      const communityDoc = await getDoc(communityDocRef);
+      setCurrentCommunity({ id: communityDoc.id, ...communityDoc.data() } as ICommunity);
+    } catch (err: any) {
+      console.error('getCommunityData error', err.message);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       setSnippets([]);
@@ -119,9 +131,18 @@ const useCommunityData = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  useEffect(() => {
+    const { communityId } = router.query;
+    if (communityId && !currentCommunity) {
+      getCommunityData(communityId as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query, currentCommunity]);
+
   return {
     communityStateValue: { snippets, currentCommunity },
     onJoinLeaveOrJoinCommunity,
+    setCurrentCommunity,
     isLoading,
     error,
   };

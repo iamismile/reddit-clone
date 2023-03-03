@@ -1,11 +1,14 @@
+import About from '@/components/Community/About';
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import NewPostForm from '@/components/Post/NewPostForm';
 import { auth } from '@/firebase/clientApp';
+import useCommunityData from '@/hooks/useCommunityData';
 import { Box, Text } from '@chakra-ui/react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const SubmitPostPage: React.FC = () => {
   const [user] = useAuthState(auth);
+  const { communityStateValue } = useCommunityData();
 
   return (
     <PageContentLayout>
@@ -15,7 +18,11 @@ const SubmitPostPage: React.FC = () => {
         </Box>
         {user && <NewPostForm user={user} />}
       </>
-      <>About</>
+      <>
+        {communityStateValue.currentCommunity && (
+          <About communityData={communityStateValue.currentCommunity} />
+        )}
+      </>
     </PageContentLayout>
   );
 };
