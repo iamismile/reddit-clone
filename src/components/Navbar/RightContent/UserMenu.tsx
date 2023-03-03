@@ -25,11 +25,9 @@ interface UserMenuProps {
 
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const { setOpen, setView } = useAuthModalActions();
-  const { setSnippets } = useCommunityActions();
 
   const logout = async () => {
     await signOut(auth);
-    setSnippets([]);
   };
 
   return (

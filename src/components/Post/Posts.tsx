@@ -15,7 +15,7 @@ interface PostsProps {
 
 const Posts: React.FC<PostsProps> = ({ communityData }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { posts, setPosts, onVote, onDeletePost, onSelectPost } = usePosts();
+  const { posts, setPosts, postVotes, onVote, onDeletePost, onSelectPost } = usePosts();
   const [user] = useAuthState(auth);
 
   const getPosts = async () => {
@@ -51,7 +51,7 @@ const Posts: React.FC<PostsProps> = ({ communityData }) => {
               key={post.id}
               post={post}
               userIsCreator={user?.uid === post.creatorId}
-              userVoteValue={undefined}
+              userVoteValue={postVotes.find((postVote) => postVote.postId === post.id)?.voteValue}
               onVote={onVote}
               onDeletePost={onDeletePost}
               onSelectPost={onSelectPost}
