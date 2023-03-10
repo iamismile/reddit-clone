@@ -29,8 +29,8 @@ const useCommunityData = () => {
       const batch = writeBatch(firestore);
       const newSnippet = {
         communityId: communityData.id,
-        isModerator: false,
         imageURL: communityData.imageURL || '',
+        isModerator: user?.uid === communityData.creatorId,
       };
       const communitySnippetRef = doc(
         firestore,
