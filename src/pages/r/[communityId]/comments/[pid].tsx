@@ -1,3 +1,4 @@
+import Comments from '@/components/Comments/Comments';
 import About from '@/components/Community/About';
 import PageContentLayout from '@/components/Layout/PageContentLayout';
 import PostItem from '@/components/Post/PostItem';
@@ -46,6 +47,14 @@ const PostPage: React.FC = () => {
             }
             onVote={onVote}
             onDeletePost={onDeletePost}
+          />
+        )}
+
+        {selectedPost && (
+          <Comments
+            user={user}
+            selectedPost={selectedPost}
+            communityId={selectedPost.communityId}
           />
         )}
       </>
