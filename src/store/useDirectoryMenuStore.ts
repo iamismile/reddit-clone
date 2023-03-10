@@ -19,14 +19,16 @@ interface DirectoryMenuState {
   };
 }
 
+export const defaultMenuItem = {
+  displayText: 'Home',
+  link: '/',
+  icon: TiHome,
+  iconColor: 'black',
+};
+
 const useDirectoryMenuStore = create<DirectoryMenuState>()((set) => ({
   isOpen: false,
-  selectedMenuItem: {
-    displayText: 'Home',
-    link: '/',
-    icon: TiHome,
-    iconColor: 'black',
-  },
+  selectedMenuItem: defaultMenuItem,
   actions: {
     setIsOpen: (value: boolean) => set({ isOpen: value }),
     setSelectedMenuItem: (menuItem: DirectoryMenuItem) => set({ selectedMenuItem: menuItem }),

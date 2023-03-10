@@ -1,4 +1,5 @@
 import { auth } from '@/firebase/clientApp';
+import useDirectory from '@/hooks/useDirectory';
 import { useAuthModalActions } from '@/store/useAuthModalStore';
 import { Flex, Icon, Input } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -11,6 +12,7 @@ const CreatePostLink: React.FC = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const { setOpen, setView } = useAuthModalActions();
+  const { toggleMenuOpen } = useDirectory();
 
   const onClick = () => {
     if (!user) {
@@ -20,7 +22,12 @@ const CreatePostLink: React.FC = () => {
     }
 
     const { communityId } = router.query;
-    router.push(`/r/${communityId}/submit`);
+    if (communityId) {
+      router.push(`/r/${communityId}/submit`);
+      return;
+    }
+
+    toggleMenuOpen();
   };
 
   return (

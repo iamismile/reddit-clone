@@ -21,7 +21,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
   useEffect(() => {
     setCurrentCommunity(communityData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [communityData]);
 
   if (!communityData) {
     return <CommunityNotFound />;
