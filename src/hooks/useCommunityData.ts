@@ -6,6 +6,7 @@ import {
   useCommunityActions,
   useCommunityCurrentCommunity,
   useCommunitySnippets,
+  useCommunitySnippetsFetched,
 } from '@/store/useCommunityStore';
 import { collection, doc, getDoc, getDocs, increment, writeBatch } from 'firebase/firestore';
 import { useRouter } from 'next/router';
@@ -18,8 +19,10 @@ const useCommunityData = () => {
   const [user] = useAuthState(auth);
   const router = useRouter();
   const snippets = useCommunitySnippets();
+  const snippetsFetched = useCommunitySnippetsFetched();
   const currentCommunity = useCommunityCurrentCommunity();
-  const { setSnippets, addSnippet, removeSnippet, setCurrentCommunity } = useCommunityActions();
+  const { setSnippets, addSnippet, removeSnippet, setSnippetsFetched, setCurrentCommunity } =
+    useCommunityActions();
   const { setOpen, setView } = useAuthModalActions();
 
   const joinCommunity = async (communityData: ICommunity) => {
@@ -105,6 +108,7 @@ const useCommunityData = () => {
       );
       const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() })) as ICommunitySnippet[];
       setSnippets(snippets);
+      setSnippetsFetched(true);
     } catch (err: any) {
       console.error('getSnippets error', err);
       setError(err.message);
@@ -125,6 +129,7 @@ const useCommunityData = () => {
   useEffect(() => {
     if (!user) {
       setSnippets([]);
+      setSnippetsFetched(false);
       return;
     }
     getSnippets();
@@ -140,7 +145,8 @@ const useCommunityData = () => {
   }, [router.query, currentCommunity]);
 
   return {
-    communityStateValue: { snippets, currentCommunity },
+    communityStateValue: { snippets, currentCommunity, snippetsFetched },
+    addSnippet,
     onJoinLeaveOrJoinCommunity,
     setCurrentCommunity,
     isLoading,

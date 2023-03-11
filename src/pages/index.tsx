@@ -4,19 +4,43 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore } from '@/firebase/clientApp';
 import { useEffect, useState } from 'react';
 import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
-import { IPost, usePostActions, usePostPosts } from '@/store/usePostStore';
+import { IPost } from '@/store/usePostStore';
 import PostLoader from '@/components/Post/PostLoader';
 import PostItem from '@/components/Post/PostItem';
 import { Stack } from '@chakra-ui/react';
 import CreatePostLink from '@/components/Community/CreatePostLink';
 import usePosts from '@/hooks/usePosts';
+import useCommunityData from '@/hooks/useCommunityData';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, isLoadingUser] = useAuthState(auth);
   const { posts, setPosts, postVotes, onVote, onDeletePost, onSelectPost } = usePosts();
+  const { communityStateValue } = useCommunityData();
 
-  const buildUserHomeFeed = () => {};
+  const buildUserHomeFeed = async () => {
+    setIsLoading(true);
+    try {
+      if (communityStateValue.snippets.length) {
+        // Get posts from users communities
+        const communityIds = communityStateValue.snippets.map((snippet) => snippet.communityId);
+        const postQuery = query(
+          collection(firestore, 'posts'),
+          where('communityId', 'in', communityIds),
+          orderBy('createdAt', 'desc'),
+          limit(10)
+        );
+        const postDocs = await getDocs(postQuery);
+        const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setPosts(posts as IPost[]);
+      } else {
+        buildNoUserHomeFeed();
+      }
+    } catch (err) {
+      console.error('buildUserHomeFeed error', err);
+    }
+    setIsLoading(false);
+  };
 
   const buildNoUserHomeFeed = async () => {
     setIsLoading(true);
@@ -27,7 +51,6 @@ const Home: NextPage = () => {
         limit(10)
       );
       const postDocs = await getDocs(postQuery);
-      console.log({ postDocs });
       const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setPosts(posts as IPost[]);
     } catch (err) {
@@ -42,6 +65,11 @@ const Home: NextPage = () => {
     if (!user && !isLoadingUser) buildNoUserHomeFeed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isLoadingUser]);
+
+  useEffect(() => {
+    if (communityStateValue.snippetsFetched) buildUserHomeFeed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [communityStateValue.snippetsFetched]);
 
   return (
     <PageContentLayout>

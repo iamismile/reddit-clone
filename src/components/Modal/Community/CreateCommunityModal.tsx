@@ -1,4 +1,6 @@
 import { auth, firestore } from '@/firebase/clientApp';
+import useCommunityData from '@/hooks/useCommunityData';
+import useDirectory from '@/hooks/useDirectory';
 import {
   Box,
   Button,
@@ -17,6 +19,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { doc, getDoc, runTransaction, serverTimestamp, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { BsFillEyeFill, BsFillPersonFill } from 'react-icons/bs';
@@ -34,6 +37,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({ open, handl
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [user] = useAuthState(auth);
+  const { toggleMenuOpen } = useDirectory();
+  const { addSnippet } = useCommunityData();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length > 21) return;
@@ -80,6 +86,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({ open, handl
           isModerator: true,
         });
       });
+
+      handleClose();
+      toggleMenuOpen();
+      addSnippet({ communityId: communityName, isModerator: true, imageURL: '' });
+      setCommunityName('');
+      router.push(`/r/${communityName}`);
     } catch (err: any) {
       console.error('handleCreateCommunity error', err);
       setError(err.message);
