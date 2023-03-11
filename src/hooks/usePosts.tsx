@@ -167,6 +167,7 @@ const usePosts = () => {
     posts,
     setPosts,
     postVotes,
+    setPostVotes,
     selectedPost,
     setSelectedPost,
     onVote,

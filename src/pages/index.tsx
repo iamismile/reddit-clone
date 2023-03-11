@@ -3,8 +3,8 @@ import PageContentLayout from '@/components/Layout/PageContentLayout';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore } from '@/firebase/clientApp';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
-import { IPost } from '@/store/usePostStore';
+import { collection, getDoc, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import { IPost, IPostVote } from '@/store/usePostStore';
 import PostLoader from '@/components/Post/PostLoader';
 import PostItem from '@/components/Post/PostItem';
 import { Stack } from '@chakra-ui/react';
@@ -15,7 +15,8 @@ import useCommunityData from '@/hooks/useCommunityData';
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, isLoadingUser] = useAuthState(auth);
-  const { posts, setPosts, postVotes, onVote, onDeletePost, onSelectPost } = usePosts();
+  const { posts, setPosts, postVotes, setPostVotes, onVote, onDeletePost, onSelectPost } =
+    usePosts();
   const { communityStateValue } = useCommunityData();
 
   const buildUserHomeFeed = async () => {
@@ -59,7 +60,24 @@ const Home: NextPage = () => {
     setIsLoading(false);
   };
 
-  const getUserPostVotes = () => {};
+  const getUserPostVotes = async () => {
+    try {
+      const postIds = posts.map((post) => post.id);
+      const postVotesQuery = query(
+        collection(firestore, `users/${user?.uid}/postVotes`),
+        where('postId', 'in', postIds)
+      );
+
+      const postVoteDocs = await getDocs(postVotesQuery);
+      const postVotes = postVoteDocs.docs.map((postVote) => ({
+        id: postVote.id,
+        ...postVote.data(),
+      }));
+      setPostVotes(postVotes as IPostVote[]);
+    } catch (err) {
+      console.error('getUserPostVotes error', err);
+    }
+  };
 
   useEffect(() => {
     if (!user && !isLoadingUser) buildNoUserHomeFeed();
@@ -70,6 +88,15 @@ const Home: NextPage = () => {
     if (communityStateValue.snippetsFetched) buildUserHomeFeed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [communityStateValue.snippetsFetched]);
+
+  useEffect(() => {
+    if (user && posts.length) getUserPostVotes();
+
+    return () => {
+      setPostVotes([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, posts]);
 
   return (
     <PageContentLayout>
