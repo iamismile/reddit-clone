@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import moment from 'moment';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
@@ -29,6 +30,7 @@ interface PostItemProps {
   post: IPost;
   userIsCreator: boolean;
   userVoteValue?: number;
+  homePage?: boolean;
   onVote: (
     event: React.MouseEvent<SVGElement, MouseEvent>,
     post: IPost,
@@ -41,6 +43,7 @@ interface PostItemProps {
 
 const PostItem: React.FC<PostItemProps> = ({
   post,
+  homePage,
   userIsCreator,
   userVoteValue,
   onVote,
@@ -117,6 +120,31 @@ const PostItem: React.FC<PostItemProps> = ({
         <Stack spacing={1} p="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
             {/* Home Page Check */}
+            {homePage && (
+              <>
+                {post.communityImageURL ? (
+                  <Image
+                    src={post.communityImageURL}
+                    alt={post.communityId}
+                    borderRadius="full"
+                    boxSize="18px"
+                    mr={2}
+                  />
+                ) : (
+                  <Icon as={FaReddit} fontSize="10pt" mr={1} color="blue.500" />
+                )}
+                <Link href={`/r/${post.communityId}`}>
+                  <Text
+                    onClick={(e) => e.stopPropagation()}
+                    fontWeight={700}
+                    _hover={{ textDecoration: 'underline' }}
+                  >
+                    r/{post.communityId}
+                  </Text>
+                </Link>
+                <Icon as={BsDot} fontSize={8} color="gray.500" />
+              </>
+            )}
 
             <Text>
               Posted by u/{post.creatorDisplayName}{' '}

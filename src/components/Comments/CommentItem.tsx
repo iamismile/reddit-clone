@@ -19,7 +19,7 @@ interface CommentItemProps {
   comment: IComment;
   onDeleteComment: (comment: IComment) => void;
   isDeleteLoading: boolean;
-  userId: string;
+  userId?: string;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({

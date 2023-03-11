@@ -45,9 +45,10 @@ const formTabs: ITabItem[] = [
 
 interface NewPostFormProps {
   user: User;
+  communityImageURL?: string;
 }
 
-const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({ user, communityImageURL }) => {
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [textInput, setTextInput] = useState({
     title: '',
@@ -64,6 +65,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
     const { communityId } = router.query;
     const newPost: Omit<IPost, 'id'> = {
       communityId: communityId as string,
+      communityImageURL: communityImageURL || '',
       creatorId: user.uid,
       creatorDisplayName: user.email!.split('@')[0],
       title: textInput.title,
