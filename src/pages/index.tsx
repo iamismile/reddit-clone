@@ -11,6 +11,9 @@ import { Stack } from '@chakra-ui/react';
 import CreatePostLink from '@/components/Community/CreatePostLink';
 import usePosts from '@/hooks/usePosts';
 import useCommunityData from '@/hooks/useCommunityData';
+import Recommendations from '@/components/Community/Recommendations';
+import Premium from '@/components/Community/Premium';
+import PersonalHome from '@/components/Community/PersonalHome';
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -122,7 +125,11 @@ const Home: NextPage = () => {
         )}
       </>
 
-      <></>
+      <Stack spacing={5}>
+        <Recommendations />
+        <Premium />
+        <PersonalHome />
+      </Stack>
     </PageContentLayout>
   );
 };
