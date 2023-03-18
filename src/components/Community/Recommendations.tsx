@@ -137,6 +137,7 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                         fontSize="8pt"
                         onClick={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           onJoinLeaveOrJoinCommunity(item, isJoined);
                         }}
                         variant={isJoined ? 'outline' : 'solid'}
